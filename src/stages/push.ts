@@ -35,8 +35,14 @@ export const push = async () => {
 				pushPaths = pushPaths.filter((p) => !excludePaths.some((v) => v.test(p)));
 			}
 
+      let args = ["push", "--stdin", cache];
+			const jobs = core.getInput("jobs");
+
+      if (jobs)
+          args.push(`--jobs ${jobs}`);
+
 			if (!INTERNAL_DRY_RUN) {
-				await exec("attic", ["push", "--stdin", cache], {
+				await exec("attic", args, {
 					input: Buffer.from(pushPaths.join("\n")),
 				});
 			} else {
